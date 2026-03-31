@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Vaal Market | Camera Verification</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #1e2a1e;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        :root {
+            --solid-green: #2e7d32;
+            --solid-green-dark: #1b5e20;
+            --solid-green-light: #e8f5e9;
+            --solid-red: #d32f2f;
+            --solid-red-dark: #b71c1c;
+            --solid-white: #ffffff;
+            --text-dark: #1e2a1e;
+            --text-gray: #5a6b5a;
+            --border-light: #e0e0e0;
+            --pending-orange: #f57c00;
+        }
+
+        .header {
+            background: var(--solid-green);
+            padding: 0.75rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 3px solid var(--solid-red);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            background: var(--solid-red);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .logo-text span {
+            color: var(--solid-red);
+            background: white;
+            padding: 0 3px;
+            border-radius: 6px;
+        }
+
+        .search-bar {
+            flex: 1;
+            min-width: 180px;
+            background: white;
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border: 2px solid var(--solid-red);
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+
+        .sell-btn {
+            background: var(--solid-red);
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        .auth-btn {
+            background: white;
+            color: var(--solid-green);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .user-welcome {
+            background: white;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--solid-green);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .verified-badge {
+            background: var(--solid-green);
+            color: white;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 0.65rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .logout-link {
+            background: transparent;
+            border: none;
+            color: var(--solid-red);
+            font-weight: bold;
+            margin-left: 0.5rem;
+            cursor: pointer;
+        }
+
+        .back-nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 1rem;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .back-button {
+            background: white;
+            border: 2px solid var(--solid-green);
+            padding: 0.4rem 0.8rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--solid-green);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .marketplace-layout {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .sidebar {
+            width: 260px;
+            flex-shrink: 0;
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            position: sticky;
+            top: 80px;
+            height: fit-content;
+            border: 2px solid var(--solid-green);
+        }
+
+        .sidebar h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--solid-green);
+            border-bottom: 2px solid var(--solid-red);
+            padding-bottom: 0.5rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .filter-group label {
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--solid-green);
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+
+        .dropdown-filter {
+            width: 100%;
+            padding: 0.6rem;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+        }
+
+        .clear-filters-btn {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--solid-red);
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .results-count {
+            background: var(--solid-green-light);
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .listings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .listing-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-light);
+            transition: transform 0.2s;
+        }
+        .listing-card:hover { transform: translateY(-4px); }
+
+        .card-image {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+        .card-image img { width: 100%; height: 100%; object-fit: cover; }
+        .price-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--solid-red);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .category-badge {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background: var(--solid-green);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+        }
+        .card-info { padding: 0.8rem; }
+        .listing-title { font-weight: 700; margin-bottom: 0.4rem; }
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.6rem;
+            padding-top: 0.6rem;
+            border-top: 1px solid var(--border-light);
+            font-size: 0.65rem;
+            color: var(--text-gray);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 20px;
+            color: var(--text-gray);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+        .modal-content {
+            background: white;
+            max-width: 600px;
+            width: 100%;
+            border-radius: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-top: 4px solid var(--solid-red);
+            border-bottom: 4px solid var(--solid-green);
+        }
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+        }
+        .modal-header h3 { color: var(--solid-green); }
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .modal-body { padding: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.3rem;
+            color: var(--solid-green);
+            font-size: 0.85rem;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.6rem;
+            border-radius: 10px;
+            border: 2px solid var(--border-light);
+        }
+        .login-btn, .submit-listing {
+            background: var(--solid-red);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 0.8rem;
+            font-weight: 700;
+            border-radius: 40px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        .contact-info {
+            background: var(--solid-green-light);
+            padding: 1rem;
+            border-radius: 16px;
+            margin-top: 1rem;
+            border-left: 4px solid var(--solid-red);
+        }
+
+        /* Camera Styles */
+        .camera-container {
+            background: #1a1a2e;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            background: #000;
+            object-fit: cover;
+        }
+        .camera-controls {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.8rem;
+            background: #f0f0f0;
+            justify-content: center;
+        }
+        .camera-btn {
+            background: var(--solid-green);
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .camera-btn.danger {
+            background: var(--solid-red);
+        }
+        .captured-preview {
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+        .captured-preview img {
+            max-width: 100px;
+            border-radius: 12px;
+            border: 3px solid var(--solid-green);
+        }
+        .step-indicator {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: var(--solid-green-light);
+            border-radius: 40px;
+            justify-content: center;
+        }
+        .step {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            background: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-gray);
+        }
+        .step.active {
+            background: var(--solid-green);
+            color: white;
+        }
+        .step.completed {
+            background: var(--solid-green);
+            color: white;
+        }
+        .verification-note {
+            background: #fff3e0;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        .modal-back-button {
+            background: #f0f0f0;
+            color: var(--solid-green);
+            border: 2px solid var(--solid-green);
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: white;
+            background: var(--solid-green);
+            border-top: 3px solid var(--solid-red);
+            margin-top: 2rem;
+        }
+        @media (max-width: 768px) {
+            .marketplace-layout { flex-direction: column; }
+            .sidebar { width: 100%; position: static; }
+            .header-content { flex-wrap: wrap; }
+            .search-bar { order: 3; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div class="logo-area" id="homeLink">
+            <div class="logo-icon">VM</div>
+            <div class="logo-text">Vaal<span>Market</span></div>
+        </div>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search items...">
+        </div>
+        <div id="authSection"></div>
+        <button class="sell-btn" id="openSellBtn"><i class="fas fa-plus-circle"></i> Sell</button>
+    </div>
+</div>
+
+<div class="back-nav">
+    <button class="back-button" id="backToHomeBtn"><i class="fas fa-arrow-left"></i> Home</button>
+    <button class="back-button" id="backToAllBtn"><i class="fas fa-store"></i> All Items</button>
+</div>
+
+<div class="marketplace-layout">
+    <aside class="sidebar">
+        <h3><i class="fas fa-sliders-h"></i> Filters</h3>
+        <div class="filter-group">
+            <label>Category</label>
+            <select id="categoryDropdown" class="dropdown-filter">
+                <option value="all">All Categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Fashion">Fashion</option>
+                <option value="Home & Garden">Home & Garden</option>
+                <option value="Collectibles">Collectibles</option>
+                <option value="Books">Books</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Sort By</label>
+            <select id="sortDropdown" class="dropdown-filter">
+                <option value="newest">Newest First</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+            </select>
+        </div>
+        <button class="clear-filters-btn" id="clearFiltersBtn"><i class="fas fa-undo-alt"></i> Clear All</button>
+    </aside>
+    <main class="main-content">
+        <div class="results-count" id="resultsCount">0 items</div>
+        <div class="listings-grid" id="listingsGrid"></div>
+    </main>
+</div>
+<footer>📸 Camera Verification | ID & Selfie Required for Trust & Safety</footer>
+
+<!-- Camera Verification Modal -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-camera"></i> Identity Verification with Camera</h3>
+            <button class="close-modal" id="closeLoginModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="verification-note">
+                <i class="fas fa-shield-alt"></i> <strong>Real-time Verification</strong><br>
+                Use your camera to take a photo of your ID and a selfie. This ensures a safe marketplace.
+            </div>
+
+            <!-- Step Indicator -->
+            <div class="step-indicator" id="stepIndicator">
+                <div class="step active" id="step1">1. ID Document</div>
+                <div class="step" id="step2">2. Selfie Photo</div>
+                <div class="step" id="step3">3. Account Info</div>
+            </div>
+
+            <!-- Step 1: ID Camera -->
+            <div id="step1Content" class="step-content">
+                <div class="camera-container">
+                    <video id="cameraVideo" autoplay playsinline></video>
+                    <div class="camera-controls">
+                        <button type="button" class="camera-btn" id="captureIdBtn"><i class="fas fa-camera"></i> Capture ID Photo</button>
+                        <button type="button" class="camera-btn danger" id="switchToFrontIdBtn"><i class="fas fa-sync-alt"></i> Switch Camera</button>
+                    </div>
+                </div>
+                <div id="idPreview" class="captured-preview"></div>
+                <button type="button" class="login-btn" id="nextToSelfieBtn" disabled>Next: Take Selfie →</button>
+            </div>
+
+            <!-- Step 2: Selfie Camera -->
+            <div id="step2Content" class="step-content" style="display:none;">
+                <div class="camera-container">
+                    <video id="selfieVideo" autoplay playsinline></video>
+                    <div class="camera-controls">
+                        <button type="button" class="camera-btn" id="captureSelfieBtn"><i class="fas fa-camera"></i> Capture Selfie</button>
+                        <button type="button" class="camera-btn danger" id="switchToFrontSelfieBtn"><i class="fas fa-sync-alt"></i> Switch Camera</button>
+                    </div>
+                </div>
+                <div id="selfiePreview" class="captured-preview"></div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                    <button type="button" class="modal-back-button" id="backToIdBtn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <button type="button" class="login-btn" id="nextToInfoBtn" disabled>Next: Account Info →</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Account Information Form -->
+            <div id="step3Content" class="step-content" style="display:none;">
+                <form id="verificationForm">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="fullName" placeholder="Enter your full legal name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address *</label>
+                        <input type="email" id="email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="phone" placeholder="+27 XX XXX XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>Username *</label>
+                        <input type="text" id="regUsername" placeholder="Choose a username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password *</label>
+                        <input type="password" id="regPassword" placeholder="Create password" required>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" class="modal-back-button" id="backToSelfieBtn"><i class="fas fa-arrow-left"></i> Back</button>
+                        <button type="submit" class="login-btn"><i class="fas fa-check-circle"></i> Complete Verification</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Item Detail Modal -->
+<div id="detailModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Seller Contact Details</h3>
+            <button class="close-modal" id="closeDetailModal">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBodyDetail"></div>
+    </div>
+</div>
+
+<!-- Sell Modal -->
+<div id="sellModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>List Your Item</h3>
+            <button class="close-modal" id="closeSellModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <button class="modal-back-button" id="sellModalBackBtn"><i class="fas fa-arrow-left"></i> Back</button>
+            <form id="sellForm">
+                <div class="form-group"><label>Title *</label><input type="text" id="itemTitle" required></div>
+                <div class="form-group"><label>Category</label><select id="itemCategory"><option>Electronics</option><option>Fashion</option><option>Home & Garden</option><option>Collectibles</option><option>Books</option></select></div>
+                <div class="form-group"><label>Price (ZAR)</label><input type="number" id="itemPrice" step="0.01" required></div>
+                <div class="form-group"><label>Description</label><textarea id="itemDescription" rows="2"></textarea></div>
+                <div class="form-group"><label>Item Image</label><input type="file" id="itemImage" accept="image/*"><div id="imagePreview"></div></div>
+                <div class="form-group"><label>Location</label><input type="text" id="itemLocation" placeholder="City"></div>
+                <button type="submit" class="submit-listing">Publish Listing</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // User state
+    let currentUser = null;
+    let capturedIdImage = null;
+    let capturedSelfieImage = null;
+    let currentCameraStream = null;
+    let isUsingFrontCamera = false;
+    let currentActiveStep = 1;
+
+    // Sample listings
+    let listings = [
+        { id: "1", title: "iPhone 13 Pro Max", category: "Electronics", price: 12999, description: "Excellent condition", seller: "Alex Chen", location: "Cape Town", imageUrl: "https://picsum.photos/id/0/500/400", date: Date.now(), contact: "alex@example.com | +27 71 234 5678", sellerVerified: true },
+        { id: "2", title: "Vintage Levi's 501", category: "Fashion", price: 850, description: "Classic fit", seller: "VintageVibes", location: "Johannesburg", imageUrl: "https://picsum.photos/id/20/500/400", date: Date.now() - 86400000, contact: "vibes@vintage.com | WhatsApp: 082 555 1234", sellerVerified: true },
+        { id: "3", title: "Mid-Century Desk", category: "Home & Garden", price: 2250, description: "Solid wood desk", seller: "HomeGoods", location: "Durban", imageUrl: "https://picsum.photos/id/100/500/400", date: Date.now() - 172800000, contact: "homegoods@market.co.za | 031 555 7890", sellerVerified: false },
+        { id: "4", title: "Rare Pokemon Cards", category: "Collectibles", price: 6500, description: "Holographic cards", seller: "CardMaster", location: "Pretoria", imageUrl: "https://picsum.photos/id/26/500/400", date: Date.now() - 259200000, contact: "cards@collector.com", sellerVerified: true }
+    ];
+
+    function formatPrice(p) { return 'R ' + p.toLocaleString('en-ZA', { minimumFractionDigits: 2 }); }
+    function escapeHtml(str) { return str ? String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]) : ''; }
+
+    let currentCategory = "all", currentSort = "newest", searchTerm = "";
+
+    function getFilteredListings() {
+        let filtered = listings.filter(i => (i.title.toLowerCase().includes(searchTerm) || i.description.toLowerCase().includes(searchTerm)) && (currentCategory === 'all' || i.category === currentCategory));
+        if (currentSort === 'price-low') filtered.sort((a,b) => a.price - b.price);
+        else if (currentSort === 'price-high') filtered.sort((a,b) => b.price - a.price);
+        else filtered.sort((a,b) => b.date - a.date);
+        return filtered;
+    }
+
+    function renderMarketplace() {
+        const filtered = getFilteredListings();
+        const grid = document.getElementById('listingsGrid');
+        document.getElementById('resultsCount').innerText = `${filtered.length} item${filtered.length !== 1 ? 's' : ''}`;
+        if (filtered.length === 0) { grid.innerHTML = `<div class="empty-state">No listings found</div>`; return; }
+        grid.innerHTML = filtered.map(item => `
+            <div class="listing-card" data-id="${item.id}">
+                <div class="card-image"><img src="${escapeHtml(item.imageUrl)}"><span class="price-badge">${formatPrice(item.price)}</span><span class="category-badge">${escapeHtml(item.category)}</span></div>
+                <div class="card-info"><div class="listing-title">${escapeHtml(item.title)}</div><div class="card-meta"><span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(item.location)}</span><span><i class="fas fa-user"></i> ${escapeHtml(item.seller)} ${item.sellerVerified ? '✓' : '⏳'}</span></div></div>
+            </div>
+        `).join('');
+        document.querySelectorAll('.listing-card').forEach(card => card.addEventListener('click', () => { const p = listings.find(l => l.id === card.dataset.id); if(p) openDetailModal(p); }));
+    }
+
+    function openDetailModal(product) {
+        const modalBody = document.getElementById('modalBodyDetail');
+        const isLoggedIn = currentUser !== null;
+        const isVerified = currentUser?.verified === true;
+        let contactHtml = '';
+        if (!isLoggedIn) {
+            contactHtml = `<div class="contact-info"><i class="fas fa-lock"></i> <strong>Login & Verify with Camera to see contact details</strong><br><button id="promptLoginBtn" class="login-btn" style="background:var(--solid-green);">Verify Now</button></div>`;
+        } else if (!isVerified) {
+            contactHtml = `<div class="contact-info"><i class="fas fa-camera"></i> <strong>Verification Required</strong><br>Complete camera verification to view seller contacts.<br><button id="reverifyBtn" class="login-btn" style="background:var(--pending-orange);">Verify Identity</button></div>`;
+        } else {
+            contactHtml = `<div class="contact-info"><i class="fas fa-phone-alt"></i> <strong>Contact Seller:</strong><br>📧 ${escapeHtml(product.contact)}<br>📱 ${escapeHtml(product.contact)}<br><span class="verified-badge"><i class="fas fa-check-circle"></i> Verified Seller</span></div>`;
+        }
+        modalBody.innerHTML = `
+            <button class="modal-back-button" id="detailModalBackBtn"><i class="fas fa-arrow-left"></i> Back</button>
+            <div><img src="${escapeHtml(product.imageUrl)}" style="width:100%; border-radius:12px; max-height:200px; object-fit:cover;"></div>
+            <div style="font-size:1.5rem; font-weight:800; color:var(--solid-red); margin:0.5rem 0;">${formatPrice(product.price)}</div>
+            <h3>${escapeHtml(product.title)}</h3>
+            <p>${escapeHtml(product.description)}</p>
+            <p><i class="fas fa-user"></i> ${escapeHtml(product.seller)}</p>
+            <p><i class="fas fa-map-marker-alt"></i> ${escapeHtml(product.location)}</p>
+            ${contactHtml}
+        `;
+        document.getElementById('detailModal').style.display = 'flex';
+        document.getElementById('detailModalBackBtn').onclick = () => document.getElementById('detailModal').style.display = 'none';
+        if (!isLoggedIn) document.getElementById('promptLoginBtn')?.addEventListener('click', () => { document.getElementById('detailModal').style.display = 'none'; openCameraModal(); });
+        if (isLoggedIn && !isVerified) document.getElementById('reverifyBtn')?.addEventListener('click', () => { document.getElementById('detailModal').style.display = 'none'; openCameraModal(); });
+    }
+
+    // Camera Functions
+    async function startCamera(videoElement, useFrontCamera = false) {
+        if (currentCameraStream) {
+            currentCameraStream.getTracks().forEach(track => track.stop());
+        }
+        try {
+            const constraints = {
+                video: { facingMode: useFrontCamera ? "user" : "environment" }
+            };
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            currentCameraStream = stream;
+            videoElement.srcObject = stream;
+            await videoElement.play();
+        } catch (err) {
+            console.error("Camera error:", err);
+            alert("Please allow camera access to verify your identity.");
+        }
+    }
+
+    function capturePhoto(videoElement, previewElement) {
+        const canvas = document.createElement('canvas');
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
+        canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        const imageData = canvas.toDataURL('image/jpeg', 0.8);
+        previewElement.innerHTML = `<img src="${imageData}" alt="Captured">`;
+        return imageData;
+    }
+
+    function openCameraModal() {
+        document.getElementById('loginModal').style.display = 'flex';
+        resetVerificationSteps();
+    }
+
+    function resetVerificationSteps() {
+        capturedIdImage = null;
+        capturedSelfieImage = null;
+        currentActiveStep = 1;
+        document.getElementById('step1Content').style.display = 'block';
+        document.getElementById('step2Content').style.display = 'none';
+        document.getElementById('step3Content').style.display = 'none';
+        document.getElementById('step1').classList.add('active');
+        document.getElementById('step2').classList.remove('active', 'completed');
+        document.getElementById('step3').classList.remove('active', 'completed');
+        document.getElementById('nextToSelfieBtn').disabled = true;
+        document.getElementById('nextToInfoBtn').disabled = true;
+        document.getElementById('idPreview').innerHTML = '';
+        document.getElementById('selfiePreview').innerHTML = '';
+        startCamera(document.getElementById('cameraVideo'), false);
+    }
+
+    // Complete verification
+    function completeVerification(e) {
+        e.preventDefault();
+        const fullName = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const username = document.getElementById('regUsername').value.trim();
+        const password = document.getElementById('regPassword').value;
+
+        if (!fullName || !email || !username || !password) {
+            alert("Please fill all required fields");
+            return;
+        }
+
+        currentUser = {
+            username: username,
+            name: fullName,
+            email: email,
+            phone: document.getElementById('phone').value.trim(),
+            verified: true,
+            idImage: capturedIdImage,
+            selfieImage: capturedSelfieImage
+        };
+
+        if (currentCameraStream) {
+            currentCameraStream.getTracks().forEach(track => track.stop());
+            currentCameraStream = null;
+        }
+
+        updateAuthUI();
+        document.getElementById('loginModal').style.display = 'none';
+        alert(`✅ Welcome ${username}! Camera verification complete. You can now view seller contacts.`);
+        renderMarketplace();
+    }
+
+    function updateAuthUI() {
+        const authSection = document.getElementById('authSection');
+        if (currentUser) {
+            authSection.innerHTML = `<div class="user-welcome"><i class="fas fa-user-check"></i> ${escapeHtml(currentUser.username)} <span class="verified-badge"><i class="fas fa-camera"></i> Verified</span><button class="logout-link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button></div>`;
+            document.getElementById('logoutBtn')?.addEventListener('click', () => { currentUser = null; updateAuthUI(); renderMarketplace(); });
+        } else {
+            authSection.innerHTML = `<button class="auth-btn" id="showLoginBtn"><i class="fas fa-camera"></i> Verify with Camera</button>`;
+            document.getElementById('showLoginBtn')?.addEventListener('click', openCameraModal);
+        }
+    }
+
+    function addNewListing(e) {
+        e.preventDefault();
+        if (!currentUser || !currentUser.verified) {
+            alert("Please complete camera verification before selling.");
+            openCameraModal();
+            return;
+        }
+        const title = document.getElementById('itemTitle').value.trim();
+        const price = parseFloat(document.getElementById('itemPrice').value);
+        if (!title || isNaN(price) || price <= 0) { alert("Title and valid price required"); return; }
+        const imageFile = document.getElementById('itemImage').files[0];
+        let imageUrl = "https://picsum.photos/id/42/500/400";
+        if (imageFile) imageUrl = URL.createObjectURL(imageFile);
+
+        const newItem = {
+            id: Date.now().toString(36),
+            title, category: document.getElementById('itemCategory').value,
+            price, description: document.getElementById('itemDescription').value.trim() || "Great item!",
+            seller: currentUser.name || currentUser.username,
+            location: document.getElementById('itemLocation').value.trim() || "South Africa",
+            imageUrl, date: Date.now(),
+            contact: `${currentUser.email} | Phone: ${currentUser.phone || '083 123 4567'}`,
+            sellerVerified: true
+        };
+        listings.unshift(newItem);
+        document.getElementById('sellForm').reset();
+        document.getElementById('sellModal').style.display = 'none';
+        renderMarketplace();
+        alert(`✅ "${title}" listed successfully!`);
+    }
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+        // Marketplace filters
+        document.getElementById('searchInput').addEventListener('input', e => { searchTerm = e.target.value.toLowerCase(); renderMarketplace(); });
+        document.getElementById('categoryDropdown').addEventListener('change', e => { currentCategory = e.target.value; renderMarketplace(); });
+        document.getElementById('sortDropdown').addEventListener('change', e => { currentSort = e.target.value; renderMarketplace(); });
+        document.getElementById('clearFiltersBtn').addEventListener('click', () => { searchTerm=''; currentCategory='all'; currentSort='newest'; document.getElementById('searchInput').value=''; document.getElementById('categoryDropdown').value='all'; document.getElementById('sortDropdown').value='newest'; renderMarketplace(); });
+        document.getElementById('backToHomeBtn').addEventListener('click', () => { document.getElementById('searchInput').value=''; searchTerm=''; currentCategory='all'; currentSort='newest'; renderMarketplace(); });
+        document.getElementById('backToAllBtn').addEventListener('click', () => { document.getElementById('searchInput').value=''; searchTerm=''; currentCategory='all'; currentSort='newest'; renderMarketplace(); });
+        document.getElementById('homeLink').addEventListener('click', () => { document.getElementById('searchInput').value=''; searchTerm=''; currentCategory='all'; currentSort='newest'; renderMarketplace(); });
+
+        // Modal close buttons
+        document.getElementById('closeDetailModal').onclick = () => document.getElementById('detailModal').style.display = 'none';
+        document.getElementById('closeSellModal').onclick = () => document.getElementById('sellModal').style.display = 'none';
+        document.getElementById('sellModalBackBtn').onclick = () => document.getElementById('sellModal').style.display = 'none';
+        document.getElementById('closeLoginModal').onclick = () => { if(currentCameraStream) currentCameraStream.getTracks().forEach(t => t.stop()); document.getElementById('loginModal').style.display = 'none'; };
+        document.getElementById('openSellBtn').onclick = () => { if(!currentUser?.verified) { alert("Verify with camera first"); openCameraModal(); } else document.getElementById('sellModal').style.display = 'flex'; };
+        document.getElementById('sellForm').addEventListener('submit', addNewListing);
+
+        // Camera step navigation
+        const idVideo = document.getElementById('cameraVideo');
+        const selfieVideo = document.getElementById('selfieVideo');
+
+        document.getElementById('captureIdBtn').onclick = () => {
+            capturedIdImage = capturePhoto(idVideo, document.getElementById('idPreview'));
+            document.getElementById('nextToSelfieBtn').disabled = false;
+        };
+        document.getElementById('nextToSelfieBtn').onclick = () => {
+            if (!capturedIdImage) { alert("Please capture your ID photo first"); return; }
+            currentActiveStep = 2;
+            document.getElementById('step1Content').style.display = 'none';
+            document.getElementById('step2Content').style.display = 'block';
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step1').classList.add('completed');
+            document.getElementById('step2').classList.add('active');
+            startCamera(selfieVideo, true);
+        };
+        document.getElementById('captureSelfieBtn').onclick = () => {
+            capturedSelfieImage = capturePhoto(selfieVideo, document.getElementById('selfiePreview'));
+            document.getElementById('nextToInfoBtn').disabled = false;
+        };
+        document.getElementById('nextToInfoBtn').onclick = () => {
+            if (!capturedSelfieImage) { alert("Please capture your selfie first"); return; }
+            currentActiveStep = 3;
+            document.getElementById('step2Content').style.display = 'none';
+            document.getElementById('step3Content').style.display = 'block';
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step2').classList.add('completed');
+            document.getElementById('step3').classList.add('active');
+            if (currentCameraStream) { currentCameraStream.getTracks().forEach(t => t.stop()); currentCameraStream = null; }
+        };
+        document.getElementById('backToIdBtn').onclick = () => {
+            currentActiveStep = 1;
+            document.getElementById('step2Content').style.display = 'none';
+            document.getElementById('step1Content').style.display = 'block';
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+            startCamera(idVideo, false);
+        };
+        document.getElementById('backToSelfieBtn').onclick = () => {
+            currentActiveStep = 2;
+            document.getElementById('step3Content').style.display = 'none';
+            document.getElementById('step2Content').style.display = 'block';
+            document.getElementById('step3').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+            startCamera(selfieVideo, true);
+        };
+        document.getElementById('switchToFrontIdBtn').onclick = () => {
+            isUsingFrontCamera = !isUsingFrontCamera;
+            startCamera(idVideo, isUsingFrontCamera);
+        };
+        document.getElementById('switchToFrontSelfieBtn').onclick = () => {
+            isUsingFrontCamera = !isUsingFrontCamera;
+            startCamera(selfieVideo, isUsingFrontCamera);
+        };
+
+        document.getElementById('verificationForm').addEventListener('submit', completeVerification);
+        document.getElementById('itemImage').addEventListener('change', function() {
+            if(this.files[0]) document.getElementById('imagePreview').innerHTML = `<img src="${URL.createObjectURL(this.files[0])}" style="max-width:100px; border-radius:8px;">`;
+        });
+
+        updateAuthUI();
+        renderMarketplace();
+    });
+</script>
+</body>
+</html>
